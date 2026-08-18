@@ -124,6 +124,7 @@ p {
   line-height: 2em;
   letter-spacing: 0.1em;
   color: #F4F2ED;
+  cursor: pointer;
 }
 
 .hov-underline {
@@ -447,13 +448,14 @@ h2.title {
 .view-more {
   display: inline-flex;
   align-items: center;
-  gap: 85px; 
+  gap: 50px; 
   text-decoration: none;
-  margin-left: 80%;
+  margin-left: 85%;
+  cursor: pointer;
 }
 
 .view-more span {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 200;
   letter-spacing: 0.06em;
   color: #4E4B44;
@@ -461,8 +463,8 @@ h2.title {
 
 .view-more .circle {
   display: block;
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: rgba(106, 128, 95, 0.5);
   flex-shrink: 0;
@@ -472,7 +474,7 @@ h2.title {
 .view-more .circle::before {
   content: "";
   display: block;
-  width: 100px;
+  width: 60px;
   height: 1px;
   background-color: #4E4B44;
   position: absolute;
@@ -542,6 +544,7 @@ h2.title {
   position: absolute;
   bottom: 6%;
   z-index: 99;
+  cursor: pointer;
 }
 
 .circle-arrow::before,
