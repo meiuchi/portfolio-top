@@ -183,15 +183,13 @@ h1.logo {
 h3.sub-text {
   color: #F4F2ED;
   letter-spacing: 0.08em;
-  font-weight: lighter;
   margin-top: 10px;
   text-align: center;
   font-size: 18px;
-}
-
-.name span {
+  font-family: 'Noto Sans JP', 'Inter', sans-serif;
   font-weight: 100;
 }
+
 
 .scroll-container {
   position: absolute;
@@ -816,10 +814,14 @@ p.note {
 /* コンタクトエリア */
 #contact {
   background-image: url(../images/bg-contact.jpeg);
-  background-repeat: no-repeat;
+  background-size: cover;      /* ← 今は指定なし */
   background-position: center;
   margin-top: 160px;
   padding: 70px 0px;
+}
+
+@media (hover: hover) and (min-width: 769px) {
+  #contact { background-attachment: fixed; }  /* PCだけ。iOSは効かんので除外 */
 }
 
 .contact-area {
@@ -840,6 +842,9 @@ p.note {
 
 /* ボタンエリア */
 .cta-btn {
+  --cta-time: 1.4s;                              /* 変化にかける時間（長いほどゆったり） */
+  --cta-ease: cubic-bezier(0.25, 0.8, 0.25, 1);  /* 出だし・終わりともにやわらかい */
+  --cta-delay: 0.15s;                            /* 文字・アイコンが塗りを追いかける遅れ */
   margin-top: 40px;
   display: flex;
   flex-direction: column;
@@ -864,6 +869,30 @@ a.ig-btn {
   box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.25);
   box-sizing: border-box;
   padding: 15px 40px;
+
+  /* ホバー演出用 */
+  position: relative;
+  isolation: isolate; /* クリーム色を文字の下・背景の上に置くため */
+  transition:
+    color var(--cta-time) var(--cta-ease) var(--cta-delay),
+    transform var(--cta-time) var(--cta-ease),
+    box-shadow var(--cta-time) var(--cta-ease);
+}
+
+/* 左から右へ、縁がぼやけたクリーム色がふわーっと広がる（縁の形は見えない） */
+a.mail-btn::before,
+a.line-btn::before,
+a.ig-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-image: linear-gradient(90deg, #F4F2ED 0%, #F4F2ED 40%, rgba(244, 242, 237, 0) 60%);
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  background-position: 100% 0;   /* 最初は完全に透明（右にはけた状態） */
+  transition: background-position var(--cta-time) var(--cta-ease);
 }
 
 a.mail-btn img, 
@@ -874,10 +903,23 @@ a.ig-btn img {
   margin-right: 20px;
 }
 
-img.mail-btn-green,
-img.ig-btn-green,
-img.line-btn-green {
-  display: none;
+/* 白アイコンの上に緑アイコンを重ねて、ゆっくり入れ替える */
+a.mail-btn img.mail-btn-white,
+a.ig-btn img.ig-btn-white,
+a.line-btn img.line-btn-white {
+  transition: opacity var(--cta-time) var(--cta-ease) var(--cta-delay);
+}
+
+a.mail-btn img.mail-btn-green,
+a.ig-btn img.ig-btn-green,
+a.line-btn img.line-btn-green {
+  position: absolute;
+  left: 40px;       /* ボタンの左padding と同じ */
+  top: 50%;
+  margin: 0;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity var(--cta-time) var(--cta-ease) var(--cta-delay);
 }
 
 span.arrow {
@@ -889,31 +931,76 @@ span.arrow {
   transform: rotate(135deg);
   border-radius: 1px;
   margin-left: auto;
+  transition:
+    translate var(--cta-time) var(--cta-ease),
+    border-color var(--cta-time) var(--cta-ease) var(--cta-delay);
 }
 
-a.mail-btn:hover,
-a.line-btn:hover,
-a.ig-btn:hover {
-  background: #F4F2ED;
-  color: #6A805F;
+/* ホバー（マウスがある端末だけ。スマホの「触ったまま残る」を防ぐ） */
+@media (hover: hover) {
+  a.mail-btn:hover,
+  a.line-btn:hover,
+  a.ig-btn:hover,
+  a.mail-btn:focus-visible,
+  a.line-btn:focus-visible,
+  a.ig-btn:focus-visible {
+    color: #6A805F;
+    transform: translateY(-2px);
+    box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.14);
+  }
+
+  a.mail-btn:hover::before,
+  a.line-btn:hover::before,
+  a.ig-btn:hover::before,
+  a.mail-btn:focus-visible::before,
+  a.line-btn:focus-visible::before,
+  a.ig-btn:focus-visible::before {
+    background-position: 0% 0;   /* 左から全面クリームに */
+  }
+
+  .mail-btn:hover .arrow,
+  .line-btn:hover .arrow,
+  .ig-btn:hover .arrow,
+  .mail-btn:focus-visible .arrow,
+  .line-btn:focus-visible .arrow,
+  .ig-btn:focus-visible .arrow {
+    border-color: #6A805F;
+    translate: 6px 0;
+  }
+
+  .mail-btn:hover .mail-btn-white,
+  .ig-btn:hover .ig-btn-white,
+  .line-btn:hover .line-btn-white,
+  .mail-btn:focus-visible .mail-btn-white,
+  .ig-btn:focus-visible .ig-btn-white,
+  .line-btn:focus-visible .line-btn-white {
+    opacity: 0;
+  }
+
+  .mail-btn:hover .mail-btn-green,
+  .ig-btn:hover .ig-btn-green,
+  .line-btn:hover .line-btn-green,
+  .mail-btn:focus-visible .mail-btn-green,
+  .ig-btn:focus-visible .ig-btn-green,
+  .line-btn:focus-visible .line-btn-green {
+    opacity: 1;
+  }
 }
 
-.mail-btn:hover .arrow,
-.line-btn:hover .arrow,
-.ig-btn:hover .arrow {
-  border-color: #6A805F;  
-}
-
-.mail-btn:hover .mail-btn-white,
-.ig-btn:hover .ig-btn-white,
-.line-btn:hover .line-btn-white {
-  display: none;
-}
-
-.mail-btn:hover .mail-btn-green,
-.ig-btn:hover .ig-btn-green,
-.line-btn:hover .line-btn-green  {
-  display: inline-block;
+/* 「視差効果を減らす」設定の人は、色が切り替わるだけにする */
+@media (prefers-reduced-motion: reduce) {
+  a.mail-btn,
+  a.line-btn,
+  a.ig-btn,
+  a.mail-btn::before,
+  a.line-btn::before,
+  a.ig-btn::before,
+  span.arrow,
+  a.mail-btn img,
+  a.line-btn img,
+  a.ig-btn img {
+    transition: none;
+  }
 }
 
 .top-back-btn {
